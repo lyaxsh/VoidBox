@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { File, FileText, Trash2, Eye, FolderOpen } from 'lucide-react';
 import { FileItem, PageType } from '../types';
+import { BASE_URL } from '../lib/api';
 
 interface LibraryPageProps {
   files: FileItem[];
@@ -52,7 +53,7 @@ const LibraryPage: React.FC<LibraryPageProps> = ({
   };
   const confirmDeleteFile = async () => {
     if (!user?.id || !confirmDelete.file) return;
-    await fetch(`/api/mydrops/${confirmDelete.file.slug}?user_id=${user.id}`, { method: 'DELETE' });
+    await fetch(`${BASE_URL}/mydrops/${confirmDelete.file.slug}?user_id=${user.id}`, { method: 'DELETE' });
     if (typeof fetchUserFiles === 'function') await fetchUserFiles(user.id);
     if (typeof onPageChange === 'function') onPageChange('library');
     setConfirmDelete({ open: false });

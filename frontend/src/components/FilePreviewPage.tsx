@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Copy, Download } from 'lucide-react';
 import { FileItem, PageType } from '../types';
-import { getFileInfo, getDownloadUrl } from '../lib/api';
+import { getFileInfo, getDownloadUrl, BASE_URL } from '../lib/api';
 
 interface FilePreviewPageProps {
   file: FileItem;
@@ -37,7 +37,7 @@ const FilePreviewPage: React.FC<FilePreviewPageProps> = ({ file, onPageChange, t
       setNoteLoading(true);
       // Use backend proxy for note content
       const slug = (file as any).slug || file.id;
-      fetch(`/api/note-content/${slug}`)
+      fetch(`${BASE_URL}/note-content/${slug}`)
         .then(res => res.text())
         .then(text => setNoteContent(text))
         .finally(() => setNoteLoading(false));
@@ -55,7 +55,7 @@ const FilePreviewPage: React.FC<FilePreviewPageProps> = ({ file, onPageChange, t
       setZipLoading(true);
       setZipError(null);
       const slug = (file as any).slug || file.id;
-      fetch(`/api/zip-list/${slug}`)
+      fetch(`${BASE_URL}/zip-list/${slug}`)
         .then(res => res.json())
         .then(data => {
           console.log('ZIP list response:', data);
