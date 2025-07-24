@@ -360,14 +360,14 @@ const FilePreviewPage: React.FC<FilePreviewPageProps> = ({ slug, onPageChange, t
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 300 }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
-      className="p-6 md:p-12 bg-white dark:bg-black"
+      className="p-2 sm:p-6 md:p-12 bg-white dark:bg-black min-h-screen"
     >
-      <div className="max-w-4xl mx-auto">
+      <div className="w-full max-w-4xl mx-auto px-2 sm:px-6">
         {/* Header */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-center justify-between mb-8"
+          className="flex flex-col md:flex-row items-center md:justify-between mb-8 space-y-4 md:space-y-0 md:space-x-4"
         >
           <motion.button
             onClick={() => onPageChange('library')}
