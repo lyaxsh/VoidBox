@@ -10,7 +10,10 @@ import router from './routes.js';
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-app.use(cors());
+app.use(cors({
+  origin: 'https://v0idbox.vercel.app',
+  credentials: true
+}));
 app.use(json());
 app.use(fileUpload({ limits: { fileSize: 2 * 1024 * 1024 * 1024 } })); // 2GB max
 

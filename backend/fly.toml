@@ -4,7 +4,7 @@
 #
 
 app = 'voidbox-backend'
-primary_region = 'lhr'
+primary_region = 'sin'
 
 [build]
   dockerfile = 'Dockerfile'
