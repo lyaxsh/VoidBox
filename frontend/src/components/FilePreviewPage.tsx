@@ -162,7 +162,7 @@ const FilePreviewPage: React.FC<FilePreviewPageProps> = ({ slug, onPageChange, t
   };
 
   const privateLink = `${window.location.origin}/file/${slug}`;
-  const publicLink = publicSlug ? `${window.location.origin}/api/public-proxy/${publicSlug}` : '';
+  const publicLink = publicSlug ? getPublicProxyUrl(publicSlug) : '';
 
   const handleCopy = async (type: 'private' | 'public') => {
     if (copyTimeoutRef.current) clearTimeout(copyTimeoutRef.current);
@@ -179,7 +179,7 @@ const FilePreviewPage: React.FC<FilePreviewPageProps> = ({ slug, onPageChange, t
           });
           const data = await resp.json();
           setPublicSlug(data.publicSlug);
-          const link = `${window.location.origin}/api/public-proxy/${data.publicSlug}`;
+          const link = getPublicProxyUrl(data.publicSlug);
           navigator.clipboard.writeText(link);
           setCopiedType(type);
         } finally {
