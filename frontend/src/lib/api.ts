@@ -27,7 +27,7 @@ export async function uploadFile(
 
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', '/api/upload-auto');
+    xhr.open('POST', `${BASE_URL}/upload-auto`);
     xhr.upload.onprogress = function (event) {
       if (event.lengthComputable && onProgress) {
         onProgress(Math.round((event.loaded / event.total) * 100));
