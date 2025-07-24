@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { File, FileText, Trash2, Eye, FolderOpen } from 'lucide-react';
+import { File, FileText, Trash2, Eye, FolderOpen, RotateCcw } from 'lucide-react';
 import { FileItem, PageType } from '../types';
 import { BASE_URL } from '../lib/api';
 
@@ -15,28 +15,19 @@ interface LibraryPageProps {
   fetchUserFiles: (userId: string) => Promise<void>;
 }
 
-const LibraryPage: React.FC<LibraryPageProps> = ({ 
-  files, 
-  onPageChange, 
-  onFileSelect, 
-  onFileDelete,
-  theme,
-  user,
-  triggerLoginModal,
-  fetchUserFiles
-}) => {
+const LibraryPage: React.FC<LibraryPageProps> = (props) => {
+  console.log('LibraryPage rendered');
   const [filter, setFilter] = useState<'all' | 'files' | 'notes'>('all');
   const [confirmDelete, setConfirmDelete] = useState<{ open: boolean; file?: FileItem }>({ open: false });
 
-  const filteredFiles = files.filter(file => {
+  const filteredFiles = props.files.filter(file => {
     if (filter === 'files') return file.type === 'file';
     if (filter === 'notes') return file.type === 'note';
     return true;
   });
 
   const handleFileView = (file: FileItem) => {
-    onFileSelect(file);
-    onPageChange('preview');
+    props.onFileSelect(file);
   };
 
   const formatDate = (date: Date) => {
@@ -52,13 +43,25 @@ const LibraryPage: React.FC<LibraryPageProps> = ({
     setConfirmDelete({ open: true, file });
   };
   const confirmDeleteFile = async () => {
-    if (!user?.id || !confirmDelete.file) return;
-    await fetch(`${BASE_URL}/mydrops/${confirmDelete.file.slug}?user_id=${user.id}`, { method: 'DELETE' });
-    if (typeof fetchUserFiles === 'function') await fetchUserFiles(user.id);
-    if (typeof onPageChange === 'function') onPageChange('library');
+    if (!props.user?.id || !confirmDelete.file) return;
+    await fetch(`${BASE_URL}/mydrops/${confirmDelete.file.slug}?user_id=${props.user.id}`, { method: 'DELETE' });
+    if (typeof props.fetchUserFiles === 'function') await props.fetchUserFiles(props.user.id);
+    if (typeof props.onPageChange === 'function') props.onPageChange('library');
     setConfirmDelete({ open: false });
   };
   const cancelDelete = () => setConfirmDelete({ open: false });
+
+  // Keyboard shortcut for refresh
+  React.useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.ctrlKey && e.altKey && (e.key === 'R' || e.key === 'r')) {
+        e.preventDefault();
+        if (props.user?.id) props.fetchUserFiles(props.user.id);
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [props.user, props.fetchUserFiles]);
 
   return (
     <motion.div 
@@ -82,33 +85,52 @@ const LibraryPage: React.FC<LibraryPageProps> = ({
             </p>
           </div>
 
-          {/* Filter Tabs */}
-          <motion.div 
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
-            className="flex bg-gray-100 dark:bg-gray-900 rounded-xl p-1 mt-6 md:mt-0"
-          >
-            {[
-              { id: 'all', label: 'All' },
-              { id: 'files', label: 'Files' },
-              { id: 'notes', label: 'Notes' }
-            ].map((tab) => (
+          {/* Filter Tabs + Refresh Button */}
+          <div className="flex items-center gap-4 mt-6 md:mt-0">
+            {/* Refresh Button */}
+            <div className="relative group">
               <motion.button
-                key={tab.id}
-                onClick={() => setFilter(tab.id as any)}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  filter === tab.id 
-                    ? 'bg-gray-900 dark:bg-white text-white dark:text-black' 
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-                }`}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                onClick={() => window.location.reload()}
+                className="flex items-center justify-center w-11 h-11 rounded-xl bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors focus:outline-none"
+                whileHover={{ scale: 1.08 }}
+                whileTap={{ scale: 0.97 }}
+                aria-label="Refresh"
               >
-                {tab.label}
+                <RotateCcw size={22} />
               </motion.button>
-            ))}
-          </motion.div>
+              {/* Tooltip */}
+              <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-30 px-3 py-1 rounded-lg bg-white text-black text-xs font-semibold shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap border border-gray-200">
+                Re-sync
+              </div>
+            </div>
+            {/* Filter Tabs */}
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 }}
+              className="flex bg-gray-100 dark:bg-gray-900 rounded-xl p-1"
+            >
+              {[
+                { id: 'all', label: 'All' },
+                { id: 'files', label: 'Files' },
+                { id: 'notes', label: 'Notes' }
+              ].map((tab) => (
+                <motion.button
+                  key={tab.id}
+                  onClick={() => setFilter(tab.id as any)}
+                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                    filter === tab.id 
+                      ? 'bg-gray-900 dark:bg-white text-white dark:text-black' 
+                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                  }`}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {tab.label}
+                </motion.button>
+              ))}
+            </motion.div>
+          </div>
         </motion.div>
 
         <AnimatePresence mode="wait">
@@ -156,7 +178,7 @@ const LibraryPage: React.FC<LibraryPageProps> = ({
               >
                 {(filter === 'all' || filter === 'files') && (
                   <motion.button
-                    onClick={() => onPageChange('upload')}
+                    onClick={() => props.onPageChange('upload')}
                     className="bg-gray-900 dark:bg-white text-white dark:text-black px-6 py-3 rounded-xl font-semibold transition-colors"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
@@ -166,7 +188,7 @@ const LibraryPage: React.FC<LibraryPageProps> = ({
                 )}
                 {(filter === 'all' || filter === 'notes') && (
                   <motion.button
-                    onClick={() => onPageChange('text')}
+                    onClick={() => props.onPageChange('text')}
                     className={
                       filter === 'notes'
                         ? 'bg-white text-black px-6 py-3 rounded-xl font-semibold transition-colors dark:bg-white dark:text-black'

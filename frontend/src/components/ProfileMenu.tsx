@@ -65,17 +65,31 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({ open, onClose, user, onSignOu
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="fixed z-[99999] bg-white/70 dark:bg-black/70 super-blur border border-white/20 rounded-3xl shadow-2xl p-8 w-full max-w-md flex flex-col items-center"
+              className="fixed z-[99999] bg-white/70 dark:bg-black/70 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl p-8 w-full max-w-md flex flex-col items-center max-h-[90vh] overflow-y-visible"
               style={{ fontFamily: 'Inter, sans-serif', boxShadow: '0 8px 32px rgba(0,0,0,0.18)', pointerEvents: 'auto' }}
               onClick={e => e.stopPropagation()}
             >
-              <button
-                className="absolute top-5 right-5 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 text-2xl"
-                onClick={onClose}
-                aria-label="Close"
-              >
-                ×
-              </button>
+              <div className="absolute top-5 right-5 flex flex-row items-center gap-2" style={{alignItems: 'center'}}>
+                <div className="relative group">
+                  <button
+                    onClick={onSignOut}
+                    className="text-red-400 hover:text-red-600 flex items-center justify-center transition-colors"
+                    aria-label="Sign Out"
+                    style={{marginTop: '5px'}}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 16l4-4m0 0l-4-4m4 4H7"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg>
+                  </button>
+                  <div className="absolute left-0 top-full mt-1 px-2 py-1 bg-white text-gray-900 text-xs rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 border border-gray-200" style={{fontFamily: 'Inter, sans-serif'}}>Sign Out</div>
+                </div>
+                <button
+                  className="text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 text-4xl"
+                  onClick={onClose}
+                  aria-label="Close"
+                  style={{ lineHeight: 1, paddingTop: '1px' }}
+                >
+                  ×
+                </button>
+              </div>
               <div className="flex flex-col items-center mb-8">
                 <div className="w-16 h-16 rounded-full bg-gradient-to-br from-gray-200 to-gray-400 dark:from-gray-800 dark:to-gray-700 flex items-center justify-center text-3xl font-bold text-gray-700 dark:text-gray-200 mb-4 select-none">
                   {user.firstName[0]}{user.lastName[0]}
@@ -99,14 +113,19 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({ open, onClose, user, onSignOu
                     <span className="text-lg text-gray-800 dark:text-gray-200">{formatDateWithOrdinal(user.createdAt)}</span>
                   </div>
                 </div>
+                <div className="flex flex-col items-center gap-2 bg-white/20 dark:bg-white/5 border border-white/20 rounded-xl px-6 py-4 w-full mt-2">
+                  <span className="text-base text-gray-700 dark:text-gray-200 text-center mb-2">You have agreed to the VoidBox policies.</span>
+                  <a
+                    href="/policies"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full flex items-center justify-center px-4 py-2 rounded-xl text-white bg-green-600 hover:bg-green-700 font-semibold text-base transition-colors shadow"
+                    style={{ textAlign: 'center' }}
+                  >
+                    View Policies
+                  </a>
+                </div>
               </div>
-              <button
-                onClick={onSignOut}
-                className="w-full flex items-center justify-center space-x-2 px-4 py-3 rounded-xl text-white bg-red-600 hover:bg-red-700 font-semibold text-lg transition-colors mt-6 shadow-lg"
-              >
-                <LogOut size={20} />
-                <span>Sign Out</span>
-              </button>
             </motion.div>
           </motion.div>
         </>

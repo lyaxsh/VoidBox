@@ -12,23 +12,48 @@ export interface UploadResponse {
   };
 }
 
-export async function uploadFile(file: File, options?: { expiry_at?: string; expiry_days?: number; user_id?: string; user_email?: string }) {
+export async function uploadFile(
+  file: File,
+  options: any = {},
+  onProgress?: (percent: number) => void
+): Promise<any> {
   const formData = new FormData();
   formData.append('file', file);
-  if (options?.expiry_at) formData.append('expiry_at', options.expiry_at);
-  if (options?.expiry_days) formData.append('expiry_days', String(options.expiry_days));
-  if (options?.user_id) formData.append('user_id', options.user_id);
-  if (options?.user_email) formData.append('user_email', options.user_email);
-  // Debug log for FormData
-  for (const [key, value] of formData.entries()) {
-    console.log('UPLOAD DEBUG FormData:', key, value);
-  }
-  const res = await fetch(`${BASE_URL}/upload`, {
-    method: 'POST',
-    body: formData,
+  if (options.expiry_at) formData.append('expiry_at', options.expiry_at);
+  if (options.expiry_days) formData.append('expiry_days', options.expiry_days);
+  if (options.user_id) formData.append('user_id', options.user_id);
+  if (options.user_email) formData.append('user_email', options.user_email);
+  if (options.notes) formData.append('notes', options.notes);
+
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', '/api/upload-auto');
+    xhr.upload.onprogress = function (event) {
+      if (event.lengthComputable && onProgress) {
+        onProgress(Math.round((event.loaded / event.total) * 100));
+      }
+    };
+    xhr.onload = function () {
+      if (xhr.status === 201 || xhr.status === 200) {
+        try {
+          const res = JSON.parse(xhr.responseText);
+          resolve({
+            slug: res.slug,
+            file: { name: file.name },
+            ...res,
+          });
+        } catch (e) {
+          reject(new Error('Invalid response from server'));
+        }
+      } else {
+        reject(new Error(xhr.responseText));
+      }
+    };
+    xhr.onerror = function () {
+      reject(new Error('Upload failed'));
+    };
+    xhr.send(formData);
   });
-  if (!res.ok) throw new Error('Upload failed');
-  return res.json() as Promise<UploadResponse>;
 }
 
 export async function getFileInfo(slug: string) {

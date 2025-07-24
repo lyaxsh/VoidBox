@@ -8,7 +8,8 @@ interface HomePageProps {
   isMenuOpen?: boolean;
 }
 
-const HomePage: React.FC<HomePageProps> = ({ onPageChange, theme, isMenuOpen = false }) => {
+const HomePage: React.FC<HomePageProps> = (props) => {
+  console.log('HomePage rendered');
   // Add a scale variable for collective resizing
   const scale = 0.9; // Change this value (e.g., 0.8) to reduce the group size
 
@@ -20,8 +21,8 @@ const HomePage: React.FC<HomePageProps> = ({ onPageChange, theme, isMenuOpen = f
       className="min-h-screen flex items-center justify-center px-6 bg-white dark:bg-black"
     >
       <motion.div
-        animate={{ opacity: isMenuOpen ? 0.3 : 1, filter: isMenuOpen ? 'blur(3px)' : 'none' }}
-        className={`relative z-0 transition-all duration-300 ${isMenuOpen ? 'pointer-events-none select-none' : ''}`}
+        animate={{ opacity: props.isMenuOpen ? 0.3 : 1, filter: props.isMenuOpen ? 'blur(3px)' : 'none' }}
+        className={`relative z-0 transition-all duration-300 ${props.isMenuOpen ? 'pointer-events-none select-none' : ''}`}
       >
         <div className="text-center max-w-2xl">
           {/* Main Logo for Home Page */}
@@ -29,10 +30,10 @@ const HomePage: React.FC<HomePageProps> = ({ onPageChange, theme, isMenuOpen = f
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 50 }}
             transition={{ delay: 0.1, duration: 0.7 }}
-            className="flex justify-center mb-10"
+            className="flex justify-center mb-10 -mt-10 md:mt-6"
           // style={{ transform: 'translateY(140px) translateX(110px)' }} // adjust Y and X as needed
           >
-            {theme === 'dark' ? (
+            {props.theme === 'dark' ? (
               <img
                 src="/Dark_Mode_MAIN.png"
                 alt="VoidBox Logo Dark"
@@ -80,11 +81,11 @@ const HomePage: React.FC<HomePageProps> = ({ onPageChange, theme, isMenuOpen = f
       className="flex flex-col sm:flex-row gap-4 justify-center mb-16"
     >
       <motion.button
-        onClick={() => onPageChange('upload')}
+        onClick={() => props.onPageChange('upload')}
         className="bg-gray-900 dark:bg-white text-white dark:text-black px-8 py-4 rounded-2xl font-semibold text-lg transition-all"
         whileHover={{
           scale: 1.05,
-          boxShadow: theme === 'dark'
+          boxShadow: props.theme === 'dark'
             ? '0 0 30px rgba(255, 255, 255, 0.3)'
             : '0 0 30px rgba(0, 0, 0, 0.3)'
         }}
@@ -93,11 +94,11 @@ const HomePage: React.FC<HomePageProps> = ({ onPageChange, theme, isMenuOpen = f
         Upload Something
       </motion.button>
       <motion.button
-        onClick={() => onPageChange('text')}
+        onClick={() => props.onPageChange('text')}
         className="border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white px-8 py-4 rounded-2xl font-semibold text-lg hover:border-gray-500 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-900 transition-all"
         whileHover={{
           scale: 1.05,
-          boxShadow: theme === 'dark'
+          boxShadow: props.theme === 'dark'
             ? '0 0 20px rgba(255, 255, 255, 0.1)'
             : '0 0 20px rgba(0, 0, 0, 0.1)'
         }}

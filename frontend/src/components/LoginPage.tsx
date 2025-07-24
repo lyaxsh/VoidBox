@@ -151,7 +151,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSignIn, onSignUp, theme, onClos
 
         <div className="text-center mb-4">
           <h1 className="text-3xl font-light text-gray-900 dark:text-white mb-2" style={{ fontFamily: 'Playfair Display, serif' }}>
-            {step === 'email' && 'Sign In or Sign Up'}
+            {step === 'email' && 'Welcome to VoidBox'}
             {step === 'login' && `Hi, ${greetingName}`}
             {step === 'register' && 'Create Account'}
             {step === 'verify' && 'Verify Your Email'}
