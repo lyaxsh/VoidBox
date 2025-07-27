@@ -132,16 +132,32 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSignIn, onSignUp, theme, onClos
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-white/60 dark:bg-black/60 backdrop-blur-sm rounded-3xl max-h-[90vh] overflow-hidden py-8">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-white/60 dark:bg-black/60 backdrop-blur-sm rounded-3xl max-h-[90vh] overflow-hidden py-8 relative">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md"
       >
+        {/* Mobile cross button */}
         {onClose && (
           <motion.button
             onClick={onClose}
-            className="absolute top-6 right-6 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+            className="absolute top-4 right-4 md:top-6 md:right-6 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors z-10 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            aria-label="Close"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M18 6L6 18M6 6l12 12"/>
+            </svg>
+          </motion.button>
+        )}
+        
+        {/* Desktop close button (existing) */}
+        {onClose && (
+          <motion.button
+            onClick={onClose}
+            className="hidden md:block absolute top-6 right-6 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
           >

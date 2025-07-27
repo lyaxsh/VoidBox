@@ -43,6 +43,15 @@ VoidBox is a modern, privacy-focused file and note sharing platform. It allows u
 
 ---
 
+## 🔮 Future Features
+
+- [ ] **Google Auth:** OAuth integration with Google for seamless sign-in
+- [ ] **Folder Support / Multiple Files:** Upload multiple files at once and organize them in folders
+- [ ] **Multiple Bots:** Distribute load across multiple Telegram bots to manage rate limits
+- [ ] **E2E Encryption:** End-to-end encryption for enhanced file security and privacy
+
+---
+
 ## 🗂️ Project Structure
 
 ```

@@ -11,7 +11,10 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 
 app.use(cors({
-  origin: 'https://v0idbox.vercel.app',
+  origin: [
+    'http://localhost:5173',
+    'https://v0idbox.vercel.app'
+  ],
   credentials: true
 }));
 app.use(json());

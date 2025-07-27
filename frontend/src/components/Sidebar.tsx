@@ -140,17 +140,38 @@ const Sidebar: React.FC<SidebarProps> = ({
                   );
                 })}
                 {/* Profile menu item after My Drops */}
-                <motion.button
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: navItems.length * 0.08 }}
-                  whileTap={{ scale: 0.96 }}
-                  onClick={() => setProfileOpenProp(true)}
-                  className="flex items-center py-3 px-4 w-full rounded-l-full hover:bg-white/10 mt-1 min-h-[48px]"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 mr-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="5" /><path d="M20 21a8 8 0 0 0-16 0" /></svg>
-                  <span className="text-base text-white font-medium">Profile</span>
-                </motion.button>
+                {user ? (
+                  <motion.button
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: navItems.length * 0.08 }}
+                    whileTap={{ scale: 0.96 }}
+                    onClick={() => setProfileOpenProp(true)}
+                    className="flex items-center py-3 px-4 w-full rounded-l-full hover:bg-white/10 mt-1 min-h-[48px]"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 mr-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="5" /><path d="M20 21a8 8 0 0 0-16 0" /></svg>
+                    <span className="text-base text-white font-medium">Profile</span>
+                  </motion.button>
+                ) : (
+                  <motion.button
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: navItems.length * 0.08 }}
+                    whileTap={{ scale: 0.96 }}
+                    onClick={() => {
+                      if (triggerLoginModal) {
+                        triggerLoginModal();
+                      } else if (onPageChange) {
+                        onPageChange('login');
+                      }
+                      if (onClose) onClose();
+                    }}
+                    className="flex items-center py-3 px-4 w-full rounded-l-full hover:bg-white/10 mt-1 min-h-[48px]"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 mr-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10,17 15,12 10,7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                    <span className="text-base text-white font-medium">Login/Signup</span>
+                  </motion.button>
+                )}
                 {/* Theme toggle at the bottom of the mobile sidebar */}
                 {/* This block is removed as per the edit hint */}
               </nav>
