@@ -438,10 +438,10 @@ const FilePreviewPage: React.FC<FilePreviewPageProps> = ({ slug, onPageChange, t
           transition={{ delay: 0.1 }}
           className="mb-8"
         >
-          <h1 className="text-3xl font-light text-gray-900 dark:text-white mb-2" style={{ fontFamily: 'Playfair Display, serif' }}>
+          <h1 className="text-2xl sm:text-3xl font-light text-gray-900 dark:text-white mb-2 break-words overflow-hidden" style={{ fontFamily: 'Playfair Display, serif' }}>
             {fileInfo?.name}
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-gray-600 dark:text-gray-400 break-words">
             Uploaded on {fileInfo?.created_at ? formatDate(fileInfo.created_at) : ''}
           </p>
           {fileInfo?.notes && (
