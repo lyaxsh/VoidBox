@@ -40,6 +40,7 @@ VoidBox is a modern, privacy-focused file and note sharing platform. It allows u
 - **Policies & Info Pages:** Built-in pages for privacy, terms, and usage policies.
 - **Vercel/Render/Railway Ready:** Easily deployable to popular cloud platforms.
 - **Environment Variable Template:** `.env.example` provided for safe configuration.
+- **Contact Support:** Directly contact support from the sidebar
 
 ---
 
