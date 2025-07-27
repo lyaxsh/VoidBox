@@ -1,12 +1,13 @@
 import React, { useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Home, Upload, FileText, FolderOpen, Settings, LogOut, User } from 'lucide-react';
+import { Home, Upload, FileText, FolderOpen, Settings, LogOut, User, MessageSquare } from 'lucide-react';
 import { User as SupabaseUser } from '@supabase/supabase-js';
 import { PageType } from '../types';
 import Lottie from 'lottie-react';
 import guestAnimation from '../../wired-outline-21-avatar-hover-looking-around.json';
 import ThemeToggle from './ThemeToggle';
 import ProfileMenu from './ProfileMenu';
+import ContactSupport from './ContactSupport';
 import { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 
@@ -58,6 +59,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [internalProfileOpen, setInternalProfileOpen] = useState(false);
   const profileOpen = typeof propProfileOpen === 'boolean' ? propProfileOpen : internalProfileOpen;
   const setProfileOpenProp = setProfileOpen || setInternalProfileOpen;
+  const [contactSupportOpen, setContactSupportOpen] = useState(false);
   const lottieRef = useRef<any>(null); // Always call useRef at the top
 
   if (isMobile) {
@@ -161,8 +163,6 @@ const Sidebar: React.FC<SidebarProps> = ({
                     onClick={() => {
                       if (triggerLoginModal) {
                         triggerLoginModal();
-                      } else if (onPageChange) {
-                        onPageChange('login');
                       }
                       if (onClose) onClose();
                     }}
@@ -172,12 +172,24 @@ const Sidebar: React.FC<SidebarProps> = ({
                     <span className="text-base text-white font-medium">Login/Signup</span>
                   </motion.button>
                 )}
-                {/* Theme toggle at the bottom of the mobile sidebar */}
-                {/* This block is removed as per the edit hint */}
+                {/* Contact Support button */}
+                <motion.button
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: (navItems.length + 1) * 0.08 }}
+                  whileTap={{ scale: 0.96 }}
+                  onClick={() => {
+                    setContactSupportOpen(true);
+                    if (onClose) onClose();
+                  }}
+                  className="flex items-center py-3 px-4 w-full rounded-l-full hover:bg-white/10 mt-1 min-h-[48px]"
+                >
+                  <MessageSquare className="w-6 h-6 mr-3 text-white" />
+                  <span className="text-base text-white font-medium">Contact Support</span>
+                </motion.button>
               </nav>
-              {/* ProfileMenu modal for mobile (removed from inside the sheet) */}
             </motion.div>
-            {/* ProfileMenu absolutely positioned above the sheet */}
+            {/* ProfileMenu modal for mobile */}
             {user && onSignOut && (
               <AnimatePresence>
                 {profileOpen && (
@@ -204,147 +216,178 @@ const Sidebar: React.FC<SidebarProps> = ({
             )}
           </>
         )}
+        
+        {/* Contact Support Modal for Mobile */}
+        <ContactSupport
+          open={contactSupportOpen}
+          onClose={() => setContactSupportOpen(false)}
+          theme={theme}
+        />
       </AnimatePresence>
     );
   }
 
   return (
-    <div className="fixed left-0 top-0 h-full w-20 bg-white dark:bg-black border-r border-gray-200 dark:border-gray-900 flex flex-col items-center py-6">
-      <motion.div 
-        className="mb-8"
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        transition={{ delay: 0.1 }}
-      >
-        <div className="w-12 h-12 rounded-xl flex items-center justify-center">
-          {theme === 'dark' ? (
-            <img src="/dark.png" alt="VoidBox" className="w-8 h-8" />
-          ) : (
-            <img src="/light.png" alt="VoidBox" className="w-8 h-8" />
-          )}
-        </div>
-      </motion.div>
-      
-      <nav className="flex flex-col space-y-4 flex-1">
-        {navItems.map((item, index) => {
-          const Icon = item.icon;
-          return (
-            <motion.button
-              key={item.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 + 0.2 }}
-              onClick={() => onPageChange(item.id)}
-              className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors group relative ${
-                currentPage === item.id 
-                  ? 'bg-gray-900 dark:bg-white text-white dark:text-black' 
-                  : 'text-gray-500 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-900'
-              }`}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Icon size={20} />
-              
-              {/* Tooltip */}
-              <div className="absolute left-16 bg-gray-900 dark:bg-white text-white dark:text-black px-3 py-2 rounded-lg text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
-                {item.label}
-              </div>
-            </motion.button>
-          );
-        })}
-        {/* Theme Toggle Button */}
-        <motion.div
-          className="flex justify-center mt-4"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: navItems.length * 0.1 + 0.2 }}
+    <>
+      <div className="fixed left-0 top-0 h-full w-20 bg-white dark:bg-black border-r border-gray-200 dark:border-gray-900 flex flex-col items-center py-6">
+        <motion.div 
+          className="mb-8"
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ delay: 0.1 }}
         >
-          {toggleTheme && (
-            <ThemeToggle
-              theme={theme}
-              onToggle={toggleTheme}
-              ref={toggleRef}
-            />
-          )}
-        </motion.div>
-      </nav>
-      
-      <div className="mt-auto space-y-4">
-        {user && onSignOut ? (
-          <>
-            <motion.button
-              onClick={() => setProfileOpenProp(true)}
-              className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors group relative ${
-                profileOpen
-                  ? 'bg-gray-900 dark:bg-white text-white dark:text-black'
-                  : 'text-gray-500 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-900'
-              }`}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              title="Profile"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="23"
-                height="23"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="lucide lucide-user-round-icon lucide-user-round"
-              >
-                <circle cx="12" cy="8" r="5" />
-                <path d="M20 21a8 8 0 0 0-16 0" />
-              </svg>
-              {/* Tooltip */}
-              <div className="absolute left-16 bg-gray-900 dark:bg-white text-white dark:text-black px-3 py-2 rounded-lg text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
-                Profile
-              </div>
-            </motion.button>
-            {/* Only render the high z-index ProfileMenu wrapper when profileOpen is true */}
-            {profileOpen && (
-              <div className="absolute left-0 top-0 w-full h-full z-50 flex items-center justify-center">
-                <ProfileMenu
-                  open={profileOpen}
-                  onClose={() => setProfileOpenProp(false)}
-                  user={{
-                    firstName: user.user_metadata?.first_name || '',
-                    lastName: user.user_metadata?.last_name || '',
-                    email: user.email || '',
-                    createdAt: user.created_at || '',
-                  }}
-                  onSignOut={onSignOut}
-                />
-              </div>
+          <div className="w-12 h-12 rounded-xl flex items-center justify-center">
+            {theme === 'dark' ? (
+              <img src="/dark.png" alt="VoidBox" className="w-8 h-8" />
+            ) : (
+              <img src="/light.png" alt="VoidBox" className="w-8 h-8" />
             )}
-          </>
-        ) : (
+          </div>
+        </motion.div>
+        
+        <nav className="flex flex-col space-y-4 flex-1">
+          {navItems.map((item, index) => {
+            const Icon = item.icon;
+            return (
+              <motion.button
+                key={item.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 + 0.2 }}
+                onClick={() => onPageChange(item.id)}
+                className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors group relative ${
+                  currentPage === item.id 
+                    ? 'bg-gray-900 dark:bg-white text-white dark:text-black' 
+                    : 'text-gray-500 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-900'
+                }`}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Icon size={20} />
+                
+                {/* Tooltip */}
+                <div className="absolute left-16 bg-gray-900 dark:bg-white text-white dark:text-black px-3 py-2 rounded-lg text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                  {item.label}
+                </div>
+              </motion.button>
+            );
+          })}
+          {/* Theme Toggle Button */}
+          <motion.div
+            className="flex justify-center mt-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: navItems.length * 0.1 + 0.2 }}
+          >
+            {toggleTheme && (
+              <ThemeToggle
+                theme={theme}
+                onToggle={toggleTheme}
+                ref={toggleRef}
+              />
+            )}
+          </motion.div>
+          
+          {/* Contact Support Button */}
           <motion.button
-            className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors group relative p-0 text-gray-500 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none`}
-            onClick={triggerLoginModal}
+            onClick={() => setContactSupportOpen(true)}
+            className="w-12 h-12 rounded-xl flex items-center justify-center transition-colors group relative text-gray-500 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-900"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
-            style={{ border: 'none', background: 'none' }}
-            onMouseEnter={() => lottieRef.current?.play?.()}
-            onMouseLeave={() => lottieRef.current?.stop?.()}
+            title="Contact Support"
           >
-            <Lottie
-              lottieRef={lottieRef}
-              animationData={guestAnimation}
-              loop={false}
-              autoplay={false}
-              style={{ width: 31, height: 31 }}
-            />
+            <MessageSquare size={20} />
             {/* Tooltip */}
             <div className="absolute left-16 bg-gray-900 dark:bg-white text-white dark:text-black px-3 py-2 rounded-lg text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
-              Guest Mode
+              Contact Support
             </div>
           </motion.button>
-        )}
+        </nav>
+        
+        <div className="mt-auto space-y-4">
+          {user && onSignOut ? (
+            <>
+              <motion.button
+                onClick={() => setProfileOpenProp(true)}
+                className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors group relative ${
+                  profileOpen
+                    ? 'bg-gray-900 dark:bg-white text-white dark:text-black'
+                    : 'text-gray-500 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-900'
+                }`}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                title="Profile"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="23"
+                  height="23"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="lucide lucide-user-round-icon lucide-user-round"
+                >
+                  <circle cx="12" cy="8" r="5" />
+                  <path d="M20 21a8 8 0 0 0-16 0" />
+                </svg>
+                {/* Tooltip */}
+                <div className="absolute left-16 bg-gray-900 dark:bg-white text-white dark:text-black px-3 py-2 rounded-lg text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                  Profile
+                </div>
+              </motion.button>
+              {/* Only render the high z-index ProfileMenu wrapper when profileOpen is true */}
+              {profileOpen && (
+                <div className="absolute left-0 top-0 w-full h-full z-50 flex items-center justify-center">
+                  <ProfileMenu
+                    open={profileOpen}
+                    onClose={() => setProfileOpenProp(false)}
+                    user={{
+                      firstName: user.user_metadata?.first_name || '',
+                      lastName: user.user_metadata?.last_name || '',
+                      email: user.email || '',
+                      createdAt: user.created_at || '',
+                    }}
+                    onSignOut={onSignOut}
+                  />
+                </div>
+              )}
+            </>
+          ) : (
+            <motion.button
+              className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors group relative p-0 text-gray-500 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none`}
+              onClick={triggerLoginModal}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              style={{ border: 'none', background: 'none' }}
+              onMouseEnter={() => lottieRef.current?.play?.()}
+              onMouseLeave={() => lottieRef.current?.stop?.()}
+            >
+              <Lottie
+                lottieRef={lottieRef}
+                animationData={guestAnimation}
+                loop={false}
+                autoplay={false}
+                style={{ width: 31, height: 31 }}
+              />
+              {/* Tooltip */}
+              <div className="absolute left-16 bg-gray-900 dark:bg-white text-white dark:text-black px-3 py-2 rounded-lg text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                Guest Mode
+              </div>
+            </motion.button>
+          )}
+        </div>
       </div>
-    </div>
+      
+      {/* Contact Support Modal */}
+      <ContactSupport
+        open={contactSupportOpen}
+        onClose={() => setContactSupportOpen(false)}
+        theme={theme}
+      />
+    </>
   );
 };
 

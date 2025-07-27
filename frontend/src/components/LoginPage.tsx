@@ -142,7 +142,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSignIn, onSignUp, theme, onClos
         {onClose && (
           <motion.button
             onClick={onClose}
-            className="absolute top-4 right-4 md:top-6 md:right-6 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors z-10 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
+            className="absolute top-[120px] right-4 md:top-6 md:right-6 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors z-10 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             aria-label="Close"

@@ -99,4 +99,33 @@ export async function uploadNote(title: string, content: string, options?: { exp
   });
   if (!res.ok) throw new Error('Note upload failed');
   return res.json() as Promise<UploadResponse>;
+}
+
+export async function contactSupport(data: {
+  name: string;
+  tg_username: string;
+  email: string;
+  subject: string;
+  message: string;
+}) {
+  // Get the contact worker URL from environment variable
+  const workerUrl = import.meta.env.VITE_CONTACT_WORKER_URL;
+  
+  if (!workerUrl) {
+    throw new Error('Contact worker URL not configured. Please set VITE_CONTACT_WORKER_URL in your environment variables.');
+  }
+  
+  const response = await fetch(workerUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to send contact form');
+  }
+
+  return response.json();
 } 
